@@ -1,3 +1,4 @@
+// Catálogo con rutas y sus precios
 let Catalogo = {
   "BuenosAires-Rosario": 150000,
   "BuenosAires-RioNegro": 200000,
@@ -10,10 +11,11 @@ let Catalogo = {
   "Santiago-BuenosAires": 300000,
   "Misiones-BuenosAires": 350000,
 };
-
+// Carrito que guarda los destinos elegidos
 let CarritoLLeno = [];
-let montonTotal = 0; // Lo ponemos afuera para que EliminarCarrito() pueda acceder
-
+// Total acumulado del carrito
+let montonTotal = 0;
+// Muestra el menú principal para que el usuario seleccione un numero correspondiente al destino elegido
 function mostrarMenu() {
   return Number(
     prompt(`Estos son los destinos que puedes elegir: 
@@ -32,10 +34,11 @@ function mostrarMenu() {
 13-salir`)
   );
 }
-
+// funcion principal del programa interactua con el usuario
 function OPCIONESDEDESTINO(Catalogo) {
   let bandera = true;
   let destinos = [
+    //lista de destinos disponibles
     "BuenosAires-Rosario",
     "BuenosAires-RioNegro",
     "BuenosAires-Cordoba",
@@ -47,7 +50,7 @@ function OPCIONESDEDESTINO(Catalogo) {
     "Santiago-BuenosAires",
     "Misiones-BuenosAires",
   ];
-
+  // Agrega un destino al carrito
   function agregarAlCarrito(nombreDestino) {
     let precio = Catalogo[nombreDestino];
     montonTotal += precio;
@@ -57,7 +60,7 @@ function OPCIONESDEDESTINO(Catalogo) {
 
   while (bandera) {
     let elegir = mostrarMenu();
-
+    // switch principal que muestra el menú mientras el usuario no elija salir
     switch (elegir) {
       case 1:
       case 2:
@@ -74,6 +77,7 @@ function OPCIONESDEDESTINO(Catalogo) {
 
         let colocarCarrito = prompt("¿Desea colocarlo en el carrito?: SI / NO");
         while (
+          // Validación para aceptar solo SI o NO
           colocarCarrito.toUpperCase() !== "SI" &&
           colocarCarrito.toUpperCase() !== "NO"
         ) {
@@ -88,17 +92,23 @@ function OPCIONESDEDESTINO(Catalogo) {
         }
         break;
 
-      case 11:
+      case 11:  // Ver carrito
         if (CarritoLLeno.length === 0) {
           alert("El carrito está vacío.");
         } else {
           let listaProductos = "";
           for (let i = 0; i < CarritoLLeno.length; i++) {
             listaProductos +=
-              i + 1 + ") " + CarritoLLeno[i].nombre + " - " + CarritoLLeno[i].precio + "$\n";
+              i +
+              1 +
+              ") " +
+              CarritoLLeno[i].nombre +
+              " - " +
+              CarritoLLeno[i].precio +
+              "$\n";
           }
           alert("Productos en el carrito:\n" + listaProductos);
-          EliminarCarrito(); // 
+          EliminarCarrito();
         }
         break;
 
@@ -115,17 +125,25 @@ function OPCIONESDEDESTINO(Catalogo) {
     }
   }
 }
-
+// Función que permite eliminar productos del carrito
 function EliminarCarrito() {
+  // Muestra los productos numerados
   let indiceProducto = "";
   for (let i = 0; i < CarritoLLeno.length; i++) {
     indiceProducto +=
-      i + 1 + ") " + CarritoLLeno[i].nombre + " - " + CarritoLLeno[i].precio + "$\n";
+      i +
+      1 +
+      ") " +
+      CarritoLLeno[i].nombre +
+      " - " +
+      CarritoLLeno[i].precio +
+      "$\n";
   }
+  // Pide al usuario qué producto desea eliminar
   let ConsultaEliminar = Number(
     prompt("¿Deseas eliminar algún producto?\n" + indiceProducto)
   );
-
+  // Validación de número ingresado
   if (
     ConsultaEliminar < 1 ||
     ConsultaEliminar > CarritoLLeno.length ||
@@ -134,17 +152,23 @@ function EliminarCarrito() {
     alert("Ingrese un número dentro de las opciones");
   } else {
     let IndiceVerdadero = ConsultaEliminar - 1;
-    let ProductoEliminado = CarritoLLeno.splice(IndiceVerdadero, 1);
-    alert(
-      `Se eliminó del carrito: ${ProductoEliminado[0].nombre} - ${ProductoEliminado[0].precio}$`
-    );
+    let confirmacion = confirm("¿Está seguro que desea eliminarlo?");
 
-    
-    montonTotal = 0;
-    for (let i = 0; i < CarritoLLeno.length; i++) {
-      montonTotal += CarritoLLeno[i].precio;
+    if (confirmacion) {// Si confirma, elimina el producto
+      let ProductoEliminado = CarritoLLeno.splice(IndiceVerdadero, 1);
+      alert(
+        `Se eliminó del carrito: ${ProductoEliminado[0].nombre} - ${ProductoEliminado[0].precio}$`
+      );
+    } else {
+      EliminarCarrito(); // Vuelve a mostrar el menú de eliminación
+      return; // Detiene esta ejecución para evitar seguir abajo
     }
   }
+  // Recalcula el total después de eliminar
+  montonTotal = 0;
+  for (let i = 0; i < CarritoLLeno.length; i++) {
+    montonTotal += CarritoLLeno[i].precio;
+  }
 }
-
+// Inicia el programa
 OPCIONESDEDESTINO(Catalogo);

@@ -11,6 +11,9 @@ let Catalogo = {
   "Misiones-BuenosAires": 350000,
 };
 
+let CarritoLLeno = [];
+let montonTotal = 0; // Lo ponemos afuera para que EliminarCarrito() pueda acceder
+
 function mostrarMenu() {
   return Number(
     prompt(`Estos son los destinos que puedes elegir: 
@@ -29,9 +32,8 @@ function mostrarMenu() {
 13-salir`)
   );
 }
-  let CarritoLLeno = []
+
 function OPCIONESDEDESTINO(Catalogo) {
-  let montonTotal = 0;
   let bandera = true;
   let destinos = [
     "BuenosAires-Rosario",
@@ -46,14 +48,11 @@ function OPCIONESDEDESTINO(Catalogo) {
     "Misiones-BuenosAires",
   ];
 
-
-  // Función anónima para agregar al carrito y mostrar alerta
   function agregarAlCarrito(nombreDestino) {
-    montonTotal += Catalogo[nombreDestino];
-    CarritoLLeno.push(nombreDestino +" "+ montonTotal+"$");
-    alert(
-      `Agregado al carrito: ${nombreDestino} - ${Catalogo[nombreDestino]}$`
-    );
+    let precio = Catalogo[nombreDestino];
+    montonTotal += precio;
+    CarritoLLeno.push({ nombre: nombreDestino, precio: precio });
+    alert(`Agregado al carrito: ${nombreDestino} - ${precio}$`);
   }
 
   while (bandera) {
@@ -71,10 +70,9 @@ function OPCIONESDEDESTINO(Catalogo) {
       case 9:
       case 10:
         let nombreDestino = destinos[elegir - 1];
-        alert(`Precio de ${nombreDestino}: ${Catalogo[nombreDestino]}$"`);
+        alert(`Precio de ${nombreDestino}: ${Catalogo[nombreDestino]}$`);
 
         let colocarCarrito = prompt("¿Desea colocarlo en el carrito?: SI / NO");
-        // Validar la respuesta (en mayúscula para evitar problemas)
         while (
           colocarCarrito.toUpperCase() !== "SI" &&
           colocarCarrito.toUpperCase() !== "NO"
@@ -91,28 +89,62 @@ function OPCIONESDEDESTINO(Catalogo) {
         break;
 
       case 11:
-        alert("Productos en el carrito:\n" + CarritoLLeno.join("\n"));
-        EliminarCarrito()
+        if (CarritoLLeno.length === 0) {
+          alert("El carrito está vacío.");
+        } else {
+          let listaProductos = "";
+          for (let i = 0; i < CarritoLLeno.length; i++) {
+            listaProductos +=
+              i + 1 + ") " + CarritoLLeno[i].nombre + " - " + CarritoLLeno[i].precio + "$\n";
+          }
+          alert("Productos en el carrito:\n" + listaProductos);
+          EliminarCarrito(); // 
+        }
         break;
-      case 12: 
-        alert("El saldo de su carrito es $" + montonTotal);  
+
+      case 12:
+        alert("El saldo de su carrito es $" + montonTotal);
+        break;
+
       case 13:
         bandera = false;
         break;
 
       default:
-        alert("Ingrese un número del 1 al 12");
+        alert("Ingrese un número del 1 al 13");
+    }
+  }
+}
+
+function EliminarCarrito() {
+  let indiceProducto = "";
+  for (let i = 0; i < CarritoLLeno.length; i++) {
+    indiceProducto +=
+      i + 1 + ") " + CarritoLLeno[i].nombre + " - " + CarritoLLeno[i].precio + "$\n";
+  }
+  let ConsultaEliminar = Number(
+    prompt("¿Deseas eliminar algún producto?\n" + indiceProducto)
+  );
+
+  if (
+    ConsultaEliminar < 1 ||
+    ConsultaEliminar > CarritoLLeno.length ||
+    isNaN(ConsultaEliminar)
+  ) {
+    alert("Ingrese un número dentro de las opciones");
+  } else {
+    let IndiceVerdadero = ConsultaEliminar - 1;
+    let ProductoEliminado = CarritoLLeno.splice(IndiceVerdadero, 1);
+    alert(
+      `Se eliminó del carrito: ${ProductoEliminado[0].nombre} - ${ProductoEliminado[0].precio}$`
+    );
+
+    
+    montonTotal = 0;
+    for (let i = 0; i < CarritoLLeno.length; i++) {
+      montonTotal += CarritoLLeno[i].precio;
     }
   }
 }
 
 OPCIONESDEDESTINO(Catalogo);
-
-
-function EliminarCarrito(){
- let indiceProducto = ""  
-for(let i = 0; i < CarritoLLeno.length; i++) {
-  indiceProducto += i + 1 + ")" + CarritoLLeno[i] + "\n";
-}
-prompt("¿deseas eliminar algun producto?\n" + indiceProducto)
-}

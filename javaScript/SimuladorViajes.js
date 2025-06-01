@@ -92,7 +92,7 @@ function OPCIONESDEDESTINO(Catalogo) {
         }
         break;
 
-      case 11:  // Ver carrito
+      case 11: // Ver carrito
         if (CarritoLLeno.length === 0) {
           alert("El carrito está vacío.");
         } else {
@@ -140,35 +140,70 @@ function EliminarCarrito() {
       "$\n";
   }
   // Pide al usuario qué producto desea eliminar
-  let ConsultaEliminar = Number(
-    prompt("¿Deseas eliminar algún producto?\n" + indiceProducto)
-  );
-  // Validación de número ingresado
-  if (
-    ConsultaEliminar < 1 ||
-    ConsultaEliminar > CarritoLLeno.length ||
-    isNaN(ConsultaEliminar)
-  ) {
-    alert("Ingrese un número dentro de las opciones");
-  } else {
-    let IndiceVerdadero = ConsultaEliminar - 1;
-    let confirmacion = confirm("¿Está seguro que desea eliminarlo?");
+  let primeraConsulta = prompt(
+  "¿Deseas eliminar algún producto?\n" + indiceProducto
+);
 
-    if (confirmacion) {// Si confirma, elimina el producto
-      let ProductoEliminado = CarritoLLeno.splice(IndiceVerdadero, 1);
-      alert(
-        `Se eliminó del carrito: ${ProductoEliminado[0].nombre} - ${ProductoEliminado[0].precio}$`
-      );
-    } else {
-      EliminarCarrito(); // Vuelve a mostrar el menú de eliminación
-      return; // Detiene esta ejecución para evitar seguir abajo
-    }
+// Si el usuario toca "Cancelar"
+if (primeraConsulta === null) {
+  // Mostrar productos del carrito y confirmar compra
+  confirmarCompra(CarritoLLeno);
+  return; // Salir de la función
+}
+
+let ConsultaEliminar = Number(primeraConsulta);
+
+if (
+  isNaN(ConsultaEliminar) ||
+  ConsultaEliminar < 1 ||
+  ConsultaEliminar > CarritoLLeno.length
+) {
+  alert("Ingrese un número dentro de las opciones");
+} else {
+  let IndiceVerdadero = ConsultaEliminar - 1;
+  let confirmacion = confirm("¿Está seguro que desea eliminarlo?");
+
+  if (confirmacion) {
+    // Si confirma, elimina el producto
+    let ProductoEliminado = CarritoLLeno.splice(IndiceVerdadero, 1);
+    alert(
+      `Se eliminó del carrito: ${ProductoEliminado[0].nombre} - ${ProductoEliminado[0].precio}$`
+    );
+    confirmarCompra(CarritoLLeno);
+  } else {
+    EliminarCarrito(); // Vuelve a mostrar el menú de eliminación
+    return;
   }
-  // Recalcula el total después de eliminar
+}
+
+// Recalcula el total después de eliminar
+montonTotal = 0;
+for (let i = 0; i < CarritoLLeno.length; i++) {
+  montonTotal += CarritoLLeno[i].precio;
+}}
+// Inicia el programa
+OPCIONESDEDESTINO(Catalogo);
+
+function confirmarCompra(CarritoLLeno) {
+  let listaProductos = "";
+  for (let i = 0; i < CarritoLLeno.length; i++) {
+    listaProductos +=
+      CarritoLLeno[i].nombre + " - " + CarritoLLeno[i].precio + "$\n";
+  }
   montonTotal = 0;
   for (let i = 0; i < CarritoLLeno.length; i++) {
     montonTotal += CarritoLLeno[i].precio;
   }
+  let ConfirmacionUsuario = confirm(
+    "desea confirmar su compra\n" +
+      listaProductos +
+      " saldo total de su compra es\n" +
+      montonTotal +
+      "$"
+  );
+  if (ConfirmacionUsuario)
+    alert(`usted compro\n ${listaProductos} por un total de\n ${montonTotal}`);
+  else {
+    mostrarMenu();
+  }
 }
-// Inicia el programa
-OPCIONESDEDESTINO(Catalogo);
